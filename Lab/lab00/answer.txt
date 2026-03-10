@@ -1,4 +1,0 @@
-grep
-ps
-kill
-diff
