@@ -1,0 +1,4 @@
+grep
+ps
+kill
+diff
