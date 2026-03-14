@@ -1,9 +1,9 @@
-1.
-2.
-3.
-4.
-5.
-6.
-7.
-8.
-9.
+1.run arg1 arg2 arg3, before running the program set arg1 arg2 arg3
+2.in the command mode, entering b [number]. In the code mode, just move to that line and perss [space]
+3.press n(next) in the command mode
+4.step(s), which will step inside the function and go through line by line
+5.countine(c)
+6.print(p)
+7.display [variable_name]
+8.infor local or info args
+9.in the command mode, press q
