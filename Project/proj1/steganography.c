@@ -85,11 +85,6 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	int len = strlen(argv[1]);
-	if(!(argv[1][len - 4] == '.' && argv[1][len - 3] == 'p' && argv[1][len - 2] == 'p' && argv[1][len - 1] == 'm')){
-		return -1;
-	}
-
 	Image *img = readData(argv[1]);
 	Image *newimg = steganography(img);
 	writeData(newimg);
