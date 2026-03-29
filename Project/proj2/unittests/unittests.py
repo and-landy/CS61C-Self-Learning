@@ -3,6 +3,13 @@ from framework import AssemblyTest, print_coverage
 
 
 class TestAbs(TestCase):
+    def test_minus_one(self):
+        t = AssemblyTest(self, "abs.s")
+        t.input_scalar("a0", -1)
+        t.call("abs")
+        t.check_scalar("a0", 1)
+        t.execute()
+
     def test_zero(self):
         t = AssemblyTest(self, "abs.s")
         # load 0 into register a0
@@ -43,6 +50,15 @@ class TestRelu(TestCase):
         # generate the `assembly/TestRelu_test_simple.s` file and run it through venus
         t.execute()
 
+    def test_errorCode(self):
+        t = AssemblyTest(self, "relu.s")
+        # set a1 to -1, which is an invalid length for the relu function
+        t.input_scalar("a1", -1)
+        # call the relu function
+        t.call("relu")
+        # check the simulation exits with error code 78
+        t.execute(code = 78)
+
     @classmethod
     def tearDownClass(cls):
         print_coverage("relu.s", verbose=False)
@@ -52,18 +68,27 @@ class TestArgmax(TestCase):
     def test_simple(self):
         t = AssemblyTest(self, "argmax.s")
         # create an array in the data section
-        raise NotImplementedError("TODO")
-        # TODO
+        array0 = t.array([121,34,2145,124,3547,89,2435,6874,245,4568,2435])
         # load address of the array into register a0
-        # TODO
+        t.input_array("a0",array0)
         # set a1 to the length of the array
-        # TODO
+        t.input_scalar("a1", len(array0))
         # call the `argmax` function
-        # TODO
+        t.call("argmax")
         # check that the register a0 contains the correct output
-        # TODO
+        t.check_scalar("a0",7)
         # generate the `assembly/TestArgmax_test_simple.s` file and run it through venus
         t.execute()
+
+    def test_errorCode(self):
+        t = AssemblyTest(self, "argmax.s")
+        # set a1 to -1, which is an invalid length for the argmax function
+        t.input_scalar("a1", -1)
+        # call the argmax function
+        t.call("argmax")
+        # check the simulation exits with error code 77
+        t.execute(code = 77)
+
 
     @classmethod
     def tearDownClass(cls):
@@ -74,17 +99,72 @@ class TestDot(TestCase):
     def test_simple(self):
         t = AssemblyTest(self, "dot.s")
         # create arrays in the data section
-        raise NotImplementedError("TODO")
-        # TODO
+        array0 = t.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
         # load array addresses into argument registers
-        # TODO
+        t.input_array("a0", array0)
         # load array attributes into argument registers
-        # TODO
+        t.input_array("a1", array0)
+        # load the length of the vectors into a2
+        t.input_scalar("a2", len(array0))
+        # load the stride of v0 into a3
+        t.input_scalar("a3", 1)
+        # load the stride of v1 into a4
+        t.input_scalar("a4", 1)
         # call the `dot` function
         t.call("dot")
         # check the return value
-        # TODO
+        t.check_scalar("a0", 285)
         t.execute()
+
+    def test_simple2(self):
+        t = AssemblyTest(self, "dot.s")
+        # create arrays in the data section
+        array0 = t.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+        # load array addresses into argument registers
+        t.input_array("a0", array0)
+        # load array attributes into argument registers
+        t.input_array("a1", array0)
+        # load the length of the vectors into a2
+        t.input_scalar("a2", 3)
+        # load the stride of v0 into a3
+        t.input_scalar("a3", 1)
+        # load the stride of v1 into a4
+        t.input_scalar("a4", 2)
+        # call the `dot` function
+        t.call("dot")
+        # check the return value
+        t.check_scalar("a0", 22)
+        t.execute()
+
+    def test_errorCode1(self):
+        t = AssemblyTest(self, "dot.s")
+        # set a1 to -1, which is an invalid length for the dot function
+        t.input_scalar("a2", -1)
+        # call the dot function
+        t.call("dot")
+        # check the simulation exits with error code 75
+        t.execute(code = 75)
+
+    def test_errorCode2(self):
+        t = AssemblyTest(self, "dot.s")
+        # set a1 to -1, which is an invalid length for the dot function
+        t.input_scalar("a2", 1)
+        t.input_scalar("a3", -1)
+        # call the dot function
+        t.call("dot")
+        # check the simulation exits with error code 76
+        t.execute(code = 76)
+
+    def test_errorCode3(self):
+        t = AssemblyTest(self, "dot.s")
+        # set a1 to -1, which is an invalid length for the dot function
+        t.input_scalar("a2", 1)
+        t.input_scalar("a3", 1)
+        t.input_scalar("a4", -1)
+        # call the dot function
+        t.call("dot")
+        # check the simulation exits with error code 76
+        t.execute(code = 76)
 
     @classmethod
     def tearDownClass(cls):
