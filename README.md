@@ -1,4 +1,4 @@
-# CS61C Self-Learning
+# 2020 Fall CS61C Self-Learning
 
 A personal repository documenting my self-study of **UC Berkeley's CS61C** (Great Ideas in Computer Architecture), completed alongside my ECE coursework at Rutgers University.
 
