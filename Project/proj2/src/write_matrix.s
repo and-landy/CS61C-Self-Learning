@@ -25,16 +25,76 @@
 write_matrix:
 
     # Prologue
+    addi sp, sp, -24
+    sw ra, 0(sp)
+    sw a0, 4(sp)
+    sw a1, 8(sp)
+    sw a2, 12(sp)
+    sw a3, 16(sp)
 
+    # fopen
+    lw a1, 4(sp)
+    li a2, 1 # Write mode
+    jal fopen
+    addi t0, x0, -1
+    beq a0, t0, exit2
+    sw a0, 20(sp)
 
+    # fwrite - rows
+    lw a1, 20(sp)
+    addi a2, sp, 12
+    addi a3, x0, 1
+    addi a4, x0, 4
+    jal fwrite
+    li t0, 1
+    bne a0, t0, exit1
 
+    # fwrite - cols
+    lw a1, 20(sp)
+    addi a2, sp, 16
+    addi a3, x0, 1
+    addi a4, x0, 4
+    jal fwrite
+    li t0, 1
+    bne a0, t0, exit1
 
+    # fwrite - matrix
+    lw a1, 20(sp)
+    lw a2, 8(sp)
+    lw t0, 12(sp)
+    lw t1, 16(sp)
+    mul t0, t0, t1
+    mv a3, t0
+    addi a4, x0, 4
+    jal fwrite
+    lw t0, 12(sp)
+    lw t1, 16(sp)
+    mul t0, t0, t1
+    bne a0, t0, exit1
 
-
-
-
+    # fclose
+    lw a1, 20(sp)
+    jal fclose
+    addi t0, x0, -1
+    beq a0, t0, exit3
 
     # Epilogue
-
+    lw ra, 0(sp)
+    addi sp, sp, 24
 
     ret
+
+exit1:
+    addi a1, x0, 94
+    addi a0, x0, 17          # ecall 17 = exit2
+    ecall
+
+exit2:
+    addi a1, x0, 93
+    addi a0, x0, 17          # ecall 17 = exit2
+    ecall
+
+exit3:
+    addi a1, x0, 95
+    addi a0, x0, 17          # ecall 17 = exit2
+    ecall
