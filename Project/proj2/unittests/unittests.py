@@ -204,6 +204,111 @@ class TestMatmul(TestCase):
         # generate the assembly file and run it through venus, we expect the simulation to exit with code `code`
         t.execute(code=code)
 
+    def m0_dimension(self, m0, m0_rows, m0_cols, m1, m1_rows, m1_cols, result):
+        t = AssemblyTest(self, "matmul.s")
+        # we need to include (aka import) the dot.s file since it is used by matmul.s
+        t.include("dot.s")
+
+        # create arrays for the arguments and to store the result
+        array0 = t.array(m0)
+        array1 = t.array(m1)
+        array_out = t.array([0] * len(result))
+
+        # load address of input matrices and set their dimensions
+        t.input_array("a0", array0)
+        t.input_scalar("a1", m0_rows)
+        t.input_scalar("a2", m0_cols)
+
+        t.input_array("a3", array1)
+        t.input_scalar("a4", m1_rows)
+        t.input_scalar("a5", m1_cols)
+
+        # load address of output array
+        t.input_array("a6", array_out)
+
+        # call the matmul function
+        t.call("matmul")
+
+        # generate the assembly file and run it through venus, we expect the simulation to exit with code `code`
+        t.execute(code=72)
+
+    def m1_dimension(self, m0, m0_rows, m0_cols, m1, m1_rows, m1_cols, result):
+        t = AssemblyTest(self, "matmul.s")
+        # we need to include (aka import) the dot.s file since it is used by matmul.s
+        t.include("dot.s")
+
+        # create arrays for the arguments and to store the result
+        array0 = t.array(m0)
+        array1 = t.array(m1)
+        array_out = t.array([0] * len(result))
+
+        # load address of input matrices and set their dimensions
+        t.input_array("a0", array0)
+        t.input_scalar("a1", m0_rows)
+        t.input_scalar("a2", m0_cols)
+
+        t.input_array("a3", array1)
+        t.input_scalar("a4", m1_rows)
+        t.input_scalar("a5", m1_cols)
+
+        # load address of output array
+        t.input_array("a6", array_out)
+
+        # call the matmul function
+        t.call("matmul")
+
+        # generate the assembly file and run it through venus, we expect the simulation to exit with code `code`
+        t.execute(code=73)
+
+    def matmul_dimension_mismatch(self, m0, m0_rows, m0_cols, m1, m1_rows, m1_cols, result):
+        t = AssemblyTest(self, "matmul.s")
+        # we need to include (aka import) the dot.s file since it is used by matmul.s
+        t.include("dot.s")
+
+        # create arrays for the arguments and to store the result
+        array0 = t.array(m0)
+        array1 = t.array(m1)
+        array_out = t.array([0] * len(result))
+
+        # load address of input matrices and set their dimensions
+        t.input_array("a0", array0)
+        t.input_scalar("a1", m0_rows)
+        t.input_scalar("a2", m0_cols)
+
+        t.input_array("a3", array1)
+        t.input_scalar("a4", m1_rows)
+        t.input_scalar("a5", m1_cols)
+
+        # load address of output array
+        t.input_array("a6", array_out)
+
+        # call the matmul function
+        t.call("matmul")
+
+        # generate the assembly file and run it through venus, we expect the simulation to exit with code `code`
+        t.execute(code=74)
+
+    def test_matmul_dimension_mismatch_exit_74(self):
+        self.matmul_dimension_mismatch(
+            [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 4,
+            [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
+            [30, 36, 42, 66, 81, 96, 102, 126, 150]
+        )
+
+    def test_m1_dimension_exit_73(self):
+        self.m1_dimension(
+            [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
+            [1, 2, 3, 4, 5, 6, 7, 8, 9], -1, -1,
+            [30, 36, 42, 66, 81, 96, 102, 126, 150]
+        )
+
+    def test_m0_dimension_exit_72(self):
+        self.m0_dimension(
+            [1, 2, 3, 4, 5, 6, 7, 8, 9], -1, -1,
+            [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
+            [30, 36, 42, 66, 81, 96, 102, 126, 150]
+        )
+
     def test_simple(self):
         self.do_matmul(
             [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
@@ -325,9 +430,10 @@ class TestClassify(TestCase):
         t.execute(args=args)
 
         # compare the output file and
-        raise NotImplementedError("TODO")
-        # TODO
+        t.check_file_output(out_file, ref_file)
+
         # compare the classification output with `check_stdout`
+        t.check_stdout(args)
 
     @classmethod
     def tearDownClass(cls):

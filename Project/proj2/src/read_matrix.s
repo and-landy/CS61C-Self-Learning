@@ -71,8 +71,7 @@ read_matrix:
     slli a0, t0, 2
     mv s0, a0
     jal malloc
-    addi t0, x0, 0
-    beq a0, t0, exit2
+    beq a0, x0, exit2
     sw a0, 16(sp) #the pointer to the allocated heap memory
 
     #read matrix
